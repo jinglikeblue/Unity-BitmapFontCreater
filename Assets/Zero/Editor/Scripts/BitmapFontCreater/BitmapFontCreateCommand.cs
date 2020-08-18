@@ -141,10 +141,27 @@ namespace ZeroEditor
             {
                 var path = AssetDatabase.GetAssetPath(t);
                 var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+
+                var isEdited = false;
+
+                //ti.textureType = TextureImporterType.Sprite;
+
+                if (ti.textureCompression != TextureImporterCompression.Uncompressed)
+                {
+                    //有些图片压缩格式，没办法进行合并纹理
+                    ti.textureCompression = TextureImporterCompression.Uncompressed;                    
+                    isEdited = true;
+                }
+
                 if (false == ti.isReadable)
                 {
                     //修改为可读写，这样才能进行后面的打包
                     ti.isReadable = true;
+                    isEdited = true;
+                }
+
+                if (isEdited)
+                {
                     ti.SaveAndReimport();
                 }
             }
